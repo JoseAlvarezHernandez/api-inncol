@@ -19,6 +19,9 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "path": "^0.12.7"
+    "mongoose": "^5.0.5",
+    "path": "^0.12.7",
+    "restify": "^4.3.1",
+    "restify-routing": "^0.3.11"
   }
 }

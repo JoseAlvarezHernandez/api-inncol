@@ -3,24 +3,23 @@
  * @author Jose de Jesus Alvarez Hernandez
  * @desc Node JS server.js
  */
+const restify = require('restify');
+const restifyRouter = require('restify-routing');
+const pathTree = require('./routes/pathTree');
+/** Restify Server */
+const server = restify.createServer();
 
-const app = require('./config/server');
-const express = require('express');
-const path = require('path');
-const port = process.env.port || 1339;
+/** Restify Router */
+let router = restifyRouter.climbPathTree(pathTree);
+router.applyRoutes(server);
+/** Node app listening port */
+server.listen(process.env.port || process.env.PORT || 3978, () => {
+    console.log('Server started');
+});
 
-const initRoute = require('./routes/init');
-/**
- * @desc Publishing public/ folder 
- */
-app.use(express.static(path.join(__dirname, 'public')));
+/** Set cors  */
+server.use(require('./configs/crossOrigins'));
 
-/** 
- * App listening port 
- */
-app.listen(port);
+/** Get Statics Route */
+server.get(/\/public\/?.*/, restify.serveStatic({ directory: __dirname }));
 
-/** 
- * App listening port 
- */
-app.use(initRoute);
