@@ -20,6 +20,3 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 /** Set cors  */
 server.use(require('./configs/crossOrigins'));
 
-/** Get Statics Route */
-server.get(/\/api-docs\/?.*/, restify.serveStatic({ directory: __dirname }));
-
