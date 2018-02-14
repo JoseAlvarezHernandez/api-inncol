@@ -19,6 +19,11 @@ const pathTree = {
     subPaths: {
         api: {
             subPaths: {
+                'swagger.json': {
+                    allowedMethods: {
+                        get: swagger
+                    }
+                },
                 users: {
                     allowedMethods: {
                         get: users.getAll
