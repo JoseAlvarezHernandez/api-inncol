@@ -12,6 +12,8 @@ const server = restify.createServer();
 /** Restify Router */
 let router = restifyRouter.climbPathTree(pathTree);
 router.applyRoutes(server);
+server.get(/\/api-docs\/?.*/, restify.serveStatic({ directory: __dirname, default: 'index.html' }));
+
 /** Node app listening port */
 server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log('Server started');
@@ -20,6 +22,4 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 /** Set cors  */
 server.use(require('./configs/crossOrigins'));
 
-/** Get Statics Route */
-server.get(/\/public\/?.*/, restify.serveStatic({ directory: __dirname }));
 
