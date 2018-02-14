@@ -4,6 +4,7 @@
  * @desc pathTree Routes
  */
 const users = require('./../controllers/users');
+const authentication = require('./../controllers/authentication');
 const swaggerDoc = require('./../configs/swagger');
 const restify = require('restify');
 const pathTree = {
@@ -22,6 +23,15 @@ const pathTree = {
                 'swagger.json': {
                     allowedMethods: {
                         get: swagger
+                    }
+                },
+                authentication: {
+                    subPaths: {
+                        'login': {
+                            allowedMethods: {
+                                post: authentication.login
+                            }
+                        }
                     }
                 },
                 users: {

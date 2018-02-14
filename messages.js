@@ -5,6 +5,7 @@
  */
 
 const messages = {
-    400: 'Wrong Arguments Received'
+    400: 'Wrong Arguments Received',
+    401: 'Wrong User credentials'
 }
 module.exports = messages;

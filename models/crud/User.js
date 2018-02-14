@@ -10,6 +10,7 @@ const APIUser = require('../User');
 const crud = {
     findAll: findAll,
     findWhere: findWhere,
+    authenticate: authenticate
 }
 function findAll(fields) {
     let query = APIUser.find({ deleted: { $ne: true } });
@@ -22,6 +23,12 @@ function findWhere(fields, conditions) {
     query.select(fields.join(' '));
     return query.exec().then(successCB, errorCB);
 }
+
+function authenticate(credentials, fields) {
+    let query = APIUser.findOne(credentials);
+    query.select(fields.join(' '));
+    return query.exec().then(successCB, errorCB);
+};
 
 function successCB(regs) {
     return (regs);
