@@ -9,7 +9,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 /** URL instance */
 const url = require('url');
 /** URL host */
-const urlHost = url.parse(process.env.api_url ? process.env.api_url : 'http://localhost:3978').host;
+const urlHost = url.parse(process.env.api_url ? process.env.api_url : 'https://api-inncol.herokuapp.com').host;
 /** API Port */
 const apiPort = process.env.port;
 
