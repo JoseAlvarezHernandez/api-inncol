@@ -21,5 +21,5 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 server.use(require('./configs/crossOrigins'));
 
 /** Get Statics Route */
-server.get(/\/public\/?.*/, restify.serveStatic({ directory: __dirname }));
+server.get(/\/api-docs\/?.*/, restify.serveStatic({ directory: __dirname }));
 
