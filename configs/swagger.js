@@ -6,8 +6,10 @@
 
 /** Swagger JSDoc instance */
 const swaggerJSDoc = require('swagger-jsdoc');
+/** URL instance */
+const url = require('url');
 /** URL host */
-const urlHost = 'http://inncol-api-inncol-api.7e14.starter-us-west-2.openshiftapps.com';
+const urlHost = url.parse(process.env.api_url ? process.env.api_url : 'http://localhost:3978').host;
 /** API Port */
 const apiPort = process.env.port;
 
@@ -34,4 +36,3 @@ const specification = swaggerJSDoc(options);
 
 /** Swagger specification */
 module.exports = specification;
-
