@@ -1,5 +1,5 @@
 /**
- * @module models/intercomUser
+ * @module models/User
  * @author Jose de Jesus Alvarez Hernandez
  * @desc API users model
  */

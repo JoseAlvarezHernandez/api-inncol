@@ -33,21 +33,14 @@ function authenticate(credentials, fields) {
 
 function save(user) {
     let APIUserResource = new APIUser(user);
-    return APIUserResource.save().then(
-        (saved) => {
-            return (saved);
-        },
-        (reason) => {
-            return ({ error: reason });
-        }
-    );
+    return APIUserResource.save().then(successCB, errorCB);
 };
 
 function successCB(regs) {
     return (regs);
 }
 
-function errorCB(regs) {
+function errorCB(reason) {
     return ({ error: reason });
 }
 module.exports = crud;

@@ -6,6 +6,8 @@
 const restify = require('restify');
 const restifyRouter = require('restify-routing');
 const pathTree = require('./routes/pathTree');
+const bunyan = require('bunyan');
+const logger = require('./models/crud/log');
 /** Restify Server */
 const server = restify.createServer();
 /** Set idiosyncrasy CURL condition */
@@ -26,5 +28,32 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 });
 /** Set cors  */
 server.use(require('./configs/crossOrigins'));
+/** Logger */
+let logBuffer = new bunyan.RingBuffer({
+    limit: 1000
+});
+server.on('after', restify.plugins.auditLogger({
+    log: bunyan.createLogger({
+        name: 'audit',
+        stream: process.stdout
+    }),
+    event: 'after',
+    server: server,
+    logMetrics: logBuffer,
+    printLog: false
+}));
 
+server.on('after', restify.plugins.metrics(server, function (err, metrics, req, res, route) {
+    logger.save(
+        {
+            logFile: {
+                metrics: metrics,
+                request: { body: req._body, headers: req.headers },
+                response: res._body,
+                route: route
+            },
+            error: typeof err === 'undefined' ? false : err
+        }
+    );
+}));
 
