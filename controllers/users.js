@@ -7,10 +7,11 @@ const messages = require('./../messages');
 const APIusersCRUD = require('./../models/crud/User');
 const authUtil = require('./../utils/auth');
 
-const fields = ['userId', 'name', 'email', 'status', 'homePage'];
+const fields = ['userId', 'name', 'email', 'status', 'homePage', 'created_at'];
 const users = {
     getAll: getAll,
-    getUser: getUser
+    getUser: getUser,
+    addUser: addUser,
 }
 /**
  * @swagger
@@ -158,7 +159,7 @@ function getAll(request, response, next) {
         } else {
             APIusersCRUD.findAll(fields).then(
                 function (users) {
-                    response.send(200, users)
+                    response.send(200, users);
                 },
                 function (reason) {
                     response.send(400, { message: reason });
@@ -223,17 +224,98 @@ function getUser(request, response, next) {
                 const conditions = { deleted: { $ne: true }, userId: userId };
                 APIusersCRUD.findWhere(fields, conditions).then(
                     function (user) {
-                        response.send(200, user)
+                        response.send(200, user);
                     }, function (reason) {
                         response.send(400, { message: reason });
                     }
                 );
             }
         } else {
-            response.send(400, { message: messages.badRequestError })
+            response.send(400, { message: messages.badRequestError }); response.send(400, { message: messages.badRequestError })
         }
     }
     return next();
 }
-
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     tags:
+ *       - Users
+ *     description: Saves User
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: Authorization
+ *         description: Bearer authorization string
+ *         in: header
+ *         required: true
+ *         type: string
+ *       - name: User
+ *         description: user object
+ *         in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/APIUser'
+ *     responses:
+ *       200:
+ *         description: Sucessful request
+ *         schema:
+ *           $ref: '#/definitions/APIUserSaved'
+ *       400:
+ *         description: Bad request 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ *       401:
+ *         description: Unauthorized access 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ *       404:
+ *         description: User not found 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ */
+function addUser(request, response, next) {
+    if (!request.header('Authorization')) {
+        response.send(400, { message: messages.badRequestError });
+    } else {
+        const userId = parseInt(request.params.userId);
+        if (isNaN(userId) || !request.params.name || !request.params.email || !request.params.password || !request.params.homePage) {
+            response.send(400, { message: messages.badRequestError });
+        } else {
+            let authToken = request.header('Authorization');
+            let userValidation = authUtil.tokenValidation(authToken);
+            if (!userValidation) {
+                response.send(401, { message: messages.expiredTokenError });
+            } else {
+                const APIuser = {
+                    name: request.params.name,
+                    email: request.params.email,
+                    password: request.params.password,
+                    userId: request.params.userId,
+                    status: 0,
+                    homePage: request.params.homePage,
+                    createdBy: userValidation.user.userId,
+                    updatedBy: userValidation.user.userId,
+                    deleted: false,
+                };
+                APIusersCRUD.save(APIuser).then((reg) => {
+                    if (!reg.error) {
+                        const responseUser = {
+                            userId: reg.userId,
+                            name: reg.name,
+                            email: reg.email,
+                            status: reg.status,
+                        };
+                        response.send(200, responseUser);
+                    } else {
+                        response.send(500, { message: reg.error.message });
+                    }
+                });
+            }
+        }
+    }
+};
 module.exports = users;

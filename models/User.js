@@ -20,7 +20,7 @@ const User = {
     createdBy: String,
     updatedBy: String,
     deleted: Boolean,
-    homePage: String
+    homePage: String,
 };
 
 /** Additional configurations */

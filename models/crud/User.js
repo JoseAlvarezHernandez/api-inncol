@@ -10,7 +10,8 @@ const APIUser = require('../User');
 const crud = {
     findAll: findAll,
     findWhere: findWhere,
-    authenticate: authenticate
+    authenticate: authenticate,
+    save: save,
 }
 function findAll(fields) {
     let query = APIUser.find({ deleted: { $ne: true } });
@@ -28,6 +29,18 @@ function authenticate(credentials, fields) {
     let query = APIUser.findOne(credentials);
     query.select(fields.join(' '));
     return query.exec().then(successCB, errorCB);
+};
+
+function save(user) {
+    let APIUserResource = new APIUser(user);
+    return APIUserResource.save().then(
+        (saved) => {
+            return (saved);
+        },
+        (reason) => {
+            return ({ error: reason });
+        }
+    );
 };
 
 function successCB(regs) {

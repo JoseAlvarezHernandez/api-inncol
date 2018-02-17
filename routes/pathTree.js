@@ -36,7 +36,8 @@ const pathTree = {
                 },
                 users: {
                     allowedMethods: {
-                        get: users.getAll
+                        get: users.getAll,
+                        post: users.addUser,
                     },
                     subPaths: {
                         ':userId': {
