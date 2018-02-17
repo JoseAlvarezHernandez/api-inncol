@@ -5,7 +5,10 @@
  */
 
 const messages = {
-    400: 'Wrong Arguments Received',
-    401: 'Wrong User credentials'
+    badRequestError: 'Wrong arguments received',
+    unauthorizedError: 'You don\'t have access to this resource',
+    expiredTokenError: 'Your token has expired',
+    wrongUserCredentials: 'Wrong User credentials',
+    notFoundUser: 'User not found.',
 }
 module.exports = messages;

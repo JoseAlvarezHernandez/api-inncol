@@ -95,7 +95,7 @@ const authentication = {
 */
 function login(req, res, next) {
     if (!req.body || req.body.username === undefined || req.body.password === undefined) {
-        res.send(400, { message: messages[400] });
+        res.send(400, { message: messages.badRequestError });
     } else {
         const credentials = {
             email: req.body.username,
@@ -120,10 +120,11 @@ function login(req, res, next) {
                 };
                 res.send(200, userResponse);
             } else {
-                res.send(401, { message: messages[401] });
+                res.send(401, { message: messages.wrongUserCredentials });
             }
         });
     }
+    return next();
 }
 
 

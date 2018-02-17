@@ -5,6 +5,8 @@
  */
 const messages = require('./../messages');
 const APIusersCRUD = require('./../models/crud/User');
+const authUtil = require('./../utils/auth');
+
 const fields = ['userId', 'name', 'email', 'status', 'homePage'];
 const users = {
     getAll: getAll,
@@ -122,41 +124,9 @@ const users = {
  *     produces:
  *       - application/json
  *     parameters:
- *     responses:
- *       200:
- *         description: Sucessful request
- *         schema:
- *           $ref: '#/definitions/Users'
- *       400:
- *         description: Bad request 
- *         schema:
- *           $ref: '#/definitions/error'
- *       401:
- *         description: Unauthorized access 
- *         schema:
- *           $ref: '#/definitions/error'
- *       404:
- *         description: User not found 
- *         schema:
- *           $ref: '#/definitions/error'
- */
-
-
-/**
- * @swagger
- * /api/users/{userId}:
- *   get:
- *     tags:
- *       - Users
- *     description: Get User by User Id
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: userId
- *         description: User Id requesting
- *         in: path
+ *       - name: Authorization
+ *         description: Bearer authorization string
+ *         in: header
  *         required: true
  *         type: string
  *     responses:
@@ -178,21 +148,92 @@ const users = {
  *           $ref: '#/definitions/error'
  */
 function getAll(request, response, next) {
-    APIusersCRUD.findAll(fields).then(function (users) {
-        response.send(200, users)
-    });
+    if (!request.header('Authorization')) {
+        response.send(400, { message: messages.badRequestError });
+    } else {
+        let authToken = request.header('Authorization');
+        let userValidation = authUtil.tokenValidation(authToken);
+        if (!userValidation) {
+            response.send(401, { message: messages.expiredTokenError });
+        } else {
+            APIusersCRUD.findAll(fields).then(
+                function (users) {
+                    response.send(200, users)
+                },
+                function (reason) {
+                    response.send(400, { message: reason });
+                }
+            );
+        }
+    }
+    return next();
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   get:
+ *     tags:
+ *       - Users
+ *     description: Get User by User Id
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: userId
+ *         description: User Id requesting
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: Authorization
+ *         description: Bearer authorization string
+ *         in: header
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Sucessful request
+ *         schema:
+ *           $ref: '#/definitions/Users'
+ *       400:
+ *         description: Bad request 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ *       401:
+ *         description: Unauthorized access 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ *       404:
+ *         description: User not found 
+ *         schema:
+ *           $ref: '#/definitions/error'
+ */
 function getUser(request, response, next) {
-    const userId = parseInt(request.params.userId);
-    if (!isNaN(userId)) {
-        const conditions = { deleted: { $ne: true }, userId: userId };
-        APIusersCRUD.findWhere(fields, conditions).then(function (user) {
-            response.send(200, user)
-        });
+    if (!request.header('Authorization')) {
+        response.send(400, { message: messages.badRequestError });
     } else {
-        response.send(400, { message: messages[400] })
+        const userId = parseInt(request.params.userId);
+        if (!isNaN(userId)) {
+            let authToken = request.header('Authorization');
+            let userValidation = authUtil.tokenValidation(authToken);
+            if (!userValidation) {
+                response.send(401, { message: messages.expiredTokenError });
+            } else {
+                const conditions = { deleted: { $ne: true }, userId: userId };
+                APIusersCRUD.findWhere(fields, conditions).then(
+                    function (user) {
+                        response.send(200, user)
+                    }, function (reason) {
+                        response.send(400, { message: reason });
+                    }
+                );
+            }
+        } else {
+            response.send(400, { message: messages.badRequestError })
+        }
     }
+    return next();
 }
 
 module.exports = users;

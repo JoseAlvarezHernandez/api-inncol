@@ -8,6 +8,10 @@ const restifyRouter = require('restify-routing');
 const pathTree = require('./routes/pathTree');
 /** Restify Server */
 const server = restify.createServer();
+/** Set idiosyncrasy CURL condition */
+server.pre(restify.plugins.pre.userAgentConnection());
+/** dedupe slashes in URL before routing */
+server.pre(restify.plugins.pre.dedupeSlashes());
 /** set parsers */
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser({ mapParams: true }));
