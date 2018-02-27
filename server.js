@@ -11,7 +11,16 @@ const logger = require('./models/crud/log');
 /** Restify Server */
 const server = restify.createServer();
 /** Set cors  */
-server.use(require('./configs/crossOrigins'));
+const corsMiddleware = require('restify-cors-middleware')
+
+const cors = corsMiddleware({
+    preflightMaxAge: 5, //Optional
+    origins: ['*'],
+    allowHeaders: ['Authorization']
+})
+
+server.pre(cors.preflight)
+server.use(cors.actual)
 /** set parsers */
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser({ mapParams: true }));
