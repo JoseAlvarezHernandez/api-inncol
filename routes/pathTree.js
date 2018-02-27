@@ -5,6 +5,7 @@
  */
 const users = require('./../controllers/users');
 const authentication = require('./../controllers/authentication');
+const qrCode = require('./../controllers/qrCode');
 const swaggerDoc = require('./../configs/swagger');
 const restify = require('restify');
 const pathTree = {
@@ -23,6 +24,18 @@ const pathTree = {
                 'swagger.json': {
                     allowedMethods: {
                         get: swagger
+                    }
+                },
+                code: {
+                    allowedMethods: {
+                        post: qrCode.postQr,
+                    },
+                    subPaths: {
+                        ':qrCodeId': {
+                            allowedMethods: {
+                                get: qrCode.getQr,
+                            }
+                        }
                     }
                 },
                 authentication: {
@@ -55,7 +68,7 @@ const pathTree = {
                         get: fakeController,
                         post: fakeController
                     }
-                }
+                },
             }
         },
     }
