@@ -41,7 +41,7 @@ const qrCode = {
  */
 /**
  * @swagger
- * /api/code:
+ * /api/code/{userId}:
  *   get:
  *     tags:
  *       - QR Code
@@ -53,7 +53,7 @@ const qrCode = {
  *     parameters:
  *       - name: qrCodeId
  *         description: QR ID
- *         in: body
+ *         in: path
  *         required: true
  *         type: Number
  *     responses:
