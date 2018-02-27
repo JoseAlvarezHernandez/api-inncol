@@ -41,7 +41,7 @@ const qrCode = {
  */
 /**
  * @swagger
- * /api/code/{userId}:
+ * /api/code/{qrCodeId}:
  *   get:
  *     tags:
  *       - QR Code
@@ -70,7 +70,7 @@ const qrCode = {
  *         schema:
  *           $ref: '#/definitions/error'
  *       404:
- *         description: User not found 
+ *         description: QR not found 
  *         schema:
  *           $ref: '#/definitions/error'
  */
@@ -122,24 +122,24 @@ function getQr(request, response, next) {
  *         schema:
  *           $ref: '#/definitions/error'
  *       404:
- *         description: User not found 
+ *         description: QR not found 
  *         schema:
  *           $ref: '#/definitions/error'
  */
 function postQr(request, response, next) {
-    if (!request.params.qrCodeId || !request.params.initDate || !request.params.endDate || !request.params.shortenURl || !request.params.createdBy) {
+    if (request.params.qrCodeId === undefined || !request.params.initDate || !request.params.endDate || !request.params.shortenURl || request.params.createdBy === undefined) {
         response.send(400, { message: messages.badRequestError });
     } else {
         APIqrCodeCRUD.save(request.params).then(function (reg) {
             if (!reg.error) {
-                const responseUser = {
+                const responseqr = {
                     qrCodeId: reg.qrCodeId,
                     initDate: reg.initDate,
                     endDate: reg.endDate,
                     shortenURl: reg.shortenURl,
                     createdBy: reg.createdBy,
                 };
-                response.send(200, responseUser);
+                response.send(200, responseqr);
             } else {
                 response.send(500, { message: reg.error.message });
             }
