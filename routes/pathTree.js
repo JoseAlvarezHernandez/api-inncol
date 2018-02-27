@@ -28,6 +28,7 @@ const pathTree = {
                 },
                 code: {
                     allowedMethods: {
+                        patch: qrCode.postQr,
                         post: qrCode.postQr,
                     },
                     subPaths: {
