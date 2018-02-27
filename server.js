@@ -11,7 +11,11 @@ const logger = require('./models/crud/log');
 /** Restify Server */
 const server = restify.createServer();
 /** Set cors  */
-server.use(require('./configs/crossOrigins'));
+//server.use(require('./configs/crossOrigins'));
+restify.CORS.ALLOW_HEADERS.push('Accept-Encoding');
+restify.CORS.ALLOW_HEADERS.push('Accept-Language');
+
+server.use(restify.CORS())
 /** set parsers */
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser({ mapParams: true }));
