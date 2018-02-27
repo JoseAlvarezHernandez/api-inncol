@@ -98,9 +98,10 @@ const users = {
  *       userId:
  *         type: string 
  *       created_at:
- *         type: date
+ *         type: string
+ *         format: date
  *       phone:
- *         type : number
+ *         type: number
  */
 /**
 * @swagger
