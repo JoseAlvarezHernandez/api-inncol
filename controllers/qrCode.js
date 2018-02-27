@@ -5,7 +5,7 @@
  */
 const messages = require('./../messages');
 const APIqrCodeCRUD = require('./../models/crud/qrCode');
-
+const unirest = require('unirest');
 const fields = ['initDate', 'endDate', 'shortenURl', 'createdBy', 'created_at'];
 const qrCode = {
     getQr: getQr,
@@ -38,6 +38,30 @@ const qrCode = {
  *         type: string 
  *       createdBy:
  *         type: number
+ */
+/**
+ * @swagger
+ * definitions:
+ *   NewAPIQR:
+ *     properties: 
+ *       qrCodeId:
+ *         type: number
+ *       initDate:
+ *         type: string
+ *         format : date
+ *       endDate:
+ *         type: string
+ *         format : date
+ *       createdBy:
+ *         type: number
+ */
+/**
+ * @swagger
+ * definitions:
+ *   NewAPIQRResponse:
+ *     properties: 
+ *       url:
+ *         type: string
  */
 /**
  * @swagger
@@ -107,12 +131,12 @@ function getQr(request, response, next) {
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/APIQR'
+ *           $ref: '#/definitions/NewAPIQR'
  *     responses:
  *       200:
  *         description: Sucessful request
  *         schema:
- *           $ref: '#/definitions/APIQR'
+ *           $ref: '#/definitions/NewAPIQRResponse'
  *       400:
  *         description: Bad request 
  *         schema:
@@ -127,21 +151,33 @@ function getQr(request, response, next) {
  *           $ref: '#/definitions/error'
  */
 function postQr(request, response, next) {
-    if (request.params.qrCodeId === undefined || !request.params.initDate || !request.params.endDate || !request.params.shortenURl || request.params.createdBy === undefined) {
+    if (request.params.qrCodeId === undefined || !request.params.initDate || !request.params.endDate || request.params.createdBy === undefined) {
         response.send(400, { message: messages.badRequestError });
     } else {
-        APIqrCodeCRUD.save(request.params).then(function (reg) {
-            if (!reg.error) {
-                const responseqr = {
-                    qrCodeId: reg.qrCodeId,
-                    initDate: reg.initDate,
-                    endDate: reg.endDate,
-                    shortenURl: reg.shortenURl,
-                    createdBy: reg.createdBy,
-                };
-                response.send(200, responseqr);
+        const url = 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyC8Y9m0FzN6fWTzsguUiJ1VQj5ILFLmTRo';
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        };
+        const params = {
+            'longUrl': `https://inncol-node-server.herokuapp.com/qr/${request.params.qrCodeId}`,
+        }
+        unirest.post(url).headers(headers).send(params).end((data) => {
+            if (data.statusCode == 200) {
+                if (data.body.id) {
+                    request.params.shortenURl = data.body.id;
+                    APIqrCodeCRUD.save(request.params).then(function (reg) {
+                        if (!reg.error) {
+                            response.send(200, { url: data.body.id });
+                        } else {
+                            response.send(500, { message: reg.error.message });
+                        }
+                    });
+                } else {
+                    response.send(400, { message: messages.badRequestError });
+                }
             } else {
-                response.send(500, { message: reg.error.message });
+                response.send(400, { message: messages.badRequestError });
             }
         });
     }
