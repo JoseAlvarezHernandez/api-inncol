@@ -231,7 +231,7 @@ function getUser(request, response, next) {
                 );
             }
         } else {
-            response.send(400, { message: messages.badRequestError }); response.send(400, { message: messages.badRequestError })
+            response.send(400, { message: messages.badRequestError });
         }
     }
     return next();
