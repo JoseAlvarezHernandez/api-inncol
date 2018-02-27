@@ -12,10 +12,10 @@ const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 const User = {
-    userId: { type: String, unique: true },
     name: String,
     email: { type: String, unique: true },
     password: String,
+    phone: { type: Number, unique: true },
     status: Number, // 1 - active, 0 - inactive, 2 - iddle
     createdBy: String,
     updatedBy: String,

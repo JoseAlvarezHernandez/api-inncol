@@ -6,7 +6,7 @@
 const messages = require('./../messages');
 const APIqrCodeCRUD = require('./../models/crud/qrCode');
 const unirest = require('unirest');
-const fields = ['initDate', 'endDate', 'shortenURl', 'createdBy', 'created_at'];
+const fields = ['initDate', 'endDate', 'shortenURl', 'createdBy', 'created_at', 'description', 'name'];
 const qrCode = {
     getQr: getQr,
     postQr: postQr
@@ -35,7 +35,11 @@ const qrCode = {
  *         type: string
  *         format : date
  *       shortenURl:
- *         type: string 
+ *         type: string
+ *       description:
+ *         type: string
+ *       name :
+ *         type: string
  *       createdBy:
  *         type: number
  */
@@ -54,6 +58,10 @@ const qrCode = {
  *         format : date
  *       createdBy:
  *         type: number
+ *       description:
+ *         type: string
+ *       name :
+ *         type: string
  */
 /**
  * @swagger
