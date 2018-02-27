@@ -20,7 +20,6 @@ server.use(restify.plugins.bodyParser({ mapParams: true }));
 let router = restifyRouter.climbPathTree(pathTree);
 router.applyRoutes(server);
 server.get(/\/api-docs\/?.*/, restify.plugins.serveStatic({ directory: __dirname, default: 'index.html' }));
-server.opts('/api/code', require('./controllers/qrCode').postQr);
 /** Node app listening port */
 server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log('Server started');
