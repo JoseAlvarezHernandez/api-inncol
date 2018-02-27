@@ -10,10 +10,8 @@ const bunyan = require('bunyan');
 const logger = require('./models/crud/log');
 /** Restify Server */
 const server = restify.createServer();
-/** Set idiosyncrasy CURL condition */
-server.pre(restify.plugins.pre.userAgentConnection());
-/** dedupe slashes in URL before routing */
-server.pre(restify.plugins.pre.dedupeSlashes());
+/** Set cors  */
+server.use(require('./configs/crossOrigins'));
 /** set parsers */
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser({ mapParams: true }));
@@ -26,8 +24,6 @@ server.get(/\/api-docs\/?.*/, restify.plugins.serveStatic({ directory: __dirname
 server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log('Server started');
 });
-/** Set cors  */
-server.use(require('./configs/crossOrigins'));
 /** Logger */
 let logBuffer = new bunyan.RingBuffer({
     limit: 1000
