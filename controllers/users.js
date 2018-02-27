@@ -7,7 +7,7 @@ const messages = require('./../messages');
 const APIusersCRUD = require('./../models/crud/User');
 const authUtil = require('./../utils/auth');
 
-const fields = ['userId', 'name', 'email', 'status', 'homePage', 'created_at'];
+const fields = ['userId', 'name', 'email', 'status', 'homePage', 'created_at', 'phone'];
 const users = {
     getAll: getAll,
     getUser: getUser,
@@ -56,15 +56,7 @@ const users = {
  *         type: string 
  *       homePage:
  *         type: string
- */
-/**
- * @swagger
- * definitions:
- *   UserGetId:
- *     properties:  
- *       email:
- *         type: string 
- *       status:
+ *       phone:
  *         type: number
  */
 /**
@@ -78,6 +70,12 @@ const users = {
  *         type: string  
  *       email:
  *         type: string 
+ *       password:
+ *         type: string 
+ *       homePage:
+ *         type: string
+ *       phone:
+ *         type: number
  */
 
 /**
@@ -99,10 +97,10 @@ const users = {
  *         type: string 
  *       userId:
  *         type: string 
- *       status:
- *         type: number
  *       created_at:
  *         type: date
+ *       phone:
+ *         type : number
  */
 /**
 * @swagger
