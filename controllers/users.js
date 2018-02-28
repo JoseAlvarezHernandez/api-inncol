@@ -7,7 +7,7 @@ const messages = require('./../messages');
 const APIusersCRUD = require('./../models/crud/User');
 const authUtil = require('./../utils/auth');
 
-const fields = ['userId', 'name', 'email', 'status', 'homePage', 'created_at', 'phone'];
+const fields = ['name', 'email', 'status', 'homePage', 'created_at', 'phone'];
 const users = {
     getAll: getAll,
     getUser: getUser,
@@ -46,8 +46,6 @@ const users = {
  * definitions:
  *   APIUser:
  *     properties: 
- *       userId:
- *         type: string
  *       name:
  *         type: string  
  *       email:
@@ -64,8 +62,6 @@ const users = {
  * definitions:
  *   APIUserSaved:
  *     properties: 
- *       userId:
- *         type: string
  *       name:
  *         type: string  
  *       email:
@@ -94,8 +90,6 @@ const users = {
  *       name:
  *         type: string  
  *       email:
- *         type: string 
- *       userId:
  *         type: string 
  *       created_at:
  *         type: string
@@ -171,7 +165,7 @@ function getAll(request, response, next) {
 
 /**
  * @swagger
- * /api/users/{userId}:
+ * /api/users/{email}:
  *   get:
  *     tags:
  *       - Users
@@ -181,8 +175,8 @@ function getAll(request, response, next) {
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: userId
- *         description: User Id requesting
+ *       - name: email
+ *         description: User email requesting
  *         in: path
  *         required: true
  *         type: string
@@ -213,24 +207,20 @@ function getUser(request, response, next) {
     if (!request.header('Authorization')) {
         response.send(400, { message: messages.badRequestError });
     } else {
-        const userId = parseInt(request.params.userId);
-        if (!isNaN(userId)) {
-            let authToken = request.header('Authorization');
-            let userValidation = authUtil.tokenValidation(authToken);
-            if (!userValidation) {
-                response.send(401, { message: messages.expiredTokenError });
-            } else {
-                const conditions = { deleted: { $ne: true }, userId: userId };
-                APIusersCRUD.findWhere(fields, conditions).then(
-                    function (user) {
-                        response.send(200, user);
-                    }, function (reason) {
-                        response.send(400, { message: reason });
-                    }
-                );
-            }
+        const email = parseInt(request.params.email);
+        let authToken = request.header('Authorization');
+        let userValidation = authUtil.tokenValidation(authToken);
+        if (!userValidation) {
+            response.send(401, { message: messages.expiredTokenError });
         } else {
-            response.send(400, { message: messages.badRequestError });
+            const conditions = { deleted: { $ne: true }, email: email };
+            APIusersCRUD.findWhere(fields, conditions).then(
+                function (user) {
+                    response.send(200, user);
+                }, function (reason) {
+                    response.send(400, { message: reason });
+                }
+            );
         }
     }
     return next();
@@ -280,8 +270,7 @@ function addUser(request, response, next) {
     if (!request.header('Authorization')) {
         response.send(400, { message: messages.badRequestError });
     } else {
-        const userId = parseInt(request.params.userId);
-        if (isNaN(userId) || !request.params.name || !request.params.email || !request.params.password || !request.params.homePage) {
+        if (!request.params.name || !request.params.email || !request.params.password || !request.params.homePage) {
             response.send(400, { message: messages.badRequestError });
         } else {
             let authToken = request.header('Authorization');
@@ -293,7 +282,7 @@ function addUser(request, response, next) {
                     name: request.params.name,
                     email: request.params.email,
                     password: request.params.password,
-                    userId: request.params.userId,
+                    phone: request.params.phone,
                     status: 0,
                     homePage: request.params.homePage,
                     createdBy: userValidation.user.userId,
@@ -303,7 +292,6 @@ function addUser(request, response, next) {
                 APIusersCRUD.save(APIuser).then((reg) => {
                     if (!reg.error) {
                         const responseUser = {
-                            userId: reg.userId,
                             name: reg.name,
                             email: reg.email,
                             status: reg.status,
