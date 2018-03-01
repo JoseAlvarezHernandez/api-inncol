@@ -93,11 +93,6 @@ const qrCode = {
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: Authorization
- *         description: Bearer authorization string
- *         in: header
- *         required: true
- *         type: string
  *       - name: qrCodeId
  *         description: QR ID
  *         in: path
@@ -122,28 +117,18 @@ const qrCode = {
  *           $ref: '#/definitions/error'
  */
 function getQr(request, response, next) {
-    if (!request.header('Authorization')) {
-        response.send(400, { message: messages.badRequestError });
-    } else {
-        let authToken = request.header('Authorization');
-        let userValidation = authUtil.tokenValidation(authToken);
-        if (!userValidation) {
-            response.send(401, { message: messages.expiredTokenError });
-        } else {
-            const qrCodeId = parseInt(request.params.qrCodeId);
-            if (!isNaN(qrCodeId)) {
-                const conditions = { qrCodeId: qrCodeId };
-                APIqrCodeCRUD.findWhere(fields, conditions).then(
-                    function (qrCode) {
-                        response.send(200, qrCode);
-                    }, function (reason) {
-                        response.send(400, { message: reason });
-                    }
-                );
-            } else {
-                response.send(400, { message: messages.badRequestError });
+    const qrCodeId = parseInt(request.params.qrCodeId);
+    if (!isNaN(qrCodeId)) {
+        const conditions = { qrCodeId: qrCodeId };
+        APIqrCodeCRUD.findWhere(fields, conditions).then(
+            function (qrCode) {
+                response.send(200, qrCode);
+            }, function (reason) {
+                response.send(400, { message: reason });
             }
-        }
+        );
+    } else {
+        response.send(400, { message: messages.badRequestError });
     }
     return next();
 }
@@ -206,7 +191,7 @@ function postQr(request, response, next) {
                     'Accept': 'application/json',
                 };
                 const params = {
-                    'longUrl': `https://inncol-node-server.herokuapp.com/qr/${request.params.qrCodeId}`,
+                    'longUrl': `codigo.inncol.com/qr/${request.params.qrCodeId}`,
                 }
                 unirest.post(url).headers(headers).send(params).end((data) => {
                     if (data.statusCode == 200) {
