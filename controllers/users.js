@@ -270,7 +270,7 @@ function addUser(request, response, next) {
     if (!request.header('Authorization')) {
         response.send(400, { message: messages.badRequestError });
     } else {
-        if (!request.params.name || !request.params.email || !request.params.password || !request.params.homePage) {
+        if (!request.params.name || !request.params.email || !request.params.password || !request.params.homePage || !request.params.phone) {
             response.send(400, { message: messages.badRequestError });
         } else {
             let authToken = request.header('Authorization');
@@ -285,8 +285,7 @@ function addUser(request, response, next) {
                     phone: request.params.phone,
                     status: 0,
                     homePage: request.params.homePage,
-                    createdBy: userValidation.user.userId,
-                    updatedBy: userValidation.user.userId,
+                    createdBy: userValidation.user.email,
                     deleted: false,
                 };
                 APIusersCRUD.save(APIuser).then((reg) => {
