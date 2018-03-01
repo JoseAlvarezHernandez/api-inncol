@@ -29,6 +29,7 @@ const pathTree = {
                 code: {
                     allowedMethods: {
                         post: qrCode.postQr,
+                        get: qrCode.getAll,
                     },
                     subPaths: {
                         ':qrCodeId': {

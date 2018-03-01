@@ -10,6 +10,7 @@ const APIqrCode = require('../qrCode');
 const crud = {
     findWhere: findWhere,
     save: save,
+    findAll: findAll,
 }
 
 function findWhere(fields, conditions) {
@@ -21,6 +22,12 @@ function findWhere(fields, conditions) {
 function save(qrCode) {
     let APIqrCodeResource = new APIqrCode(qrCode);
     return APIqrCodeResource.save().then(successCB, errorCB);
+};
+
+function findAll(fields) {
+    let query = APIqrCode.find();
+    query.select(fields.join(' '));
+    return query.exec().then(successCB, errorCB);
 };
 
 function successCB(regs) {

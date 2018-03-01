@@ -4,7 +4,7 @@ exports.tokenGeneration = (source) => {
     let token = jwt.sign(
         {
             user: source,
-        }, process.env.hash, {
+        }, process.env.hash || 'shh', {
             expiresIn: '2h',
         }
     );
@@ -17,8 +17,8 @@ exports.tokenValidation = (authBearerString) => {
 
     const token = authBearerString.replace('Bearer ', '');
     try {
-        result = jwt.verify(token, process.env.hash);
-        const fields = ['userId'];
+        result = jwt.verify(token, process.env.hash || 'shh');
+        const fields = ['email'];
         const credentials = {
             email: result.user.email,
             password: result.user.password

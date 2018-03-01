@@ -101,19 +101,17 @@ function login(req, res, next) {
             email: req.body.username,
             password: req.body.password,
         };
-        const fields = ['userId', 'homePage', 'name', 'email', 'status'];
+        const fields = ['homePage', 'name', 'email', 'status'];
         APIusersCRUD.authenticate(credentials, fields).then((user) => {
             if (user !== null) {
                 const userTokenObject = {
                     email: credentials.email,
                     password: credentials.password,
-                    userId: user.userId,
                 };
                 const token = authUtil.tokenGeneration(userTokenObject);
                 const userResponse = {
                     name: user.name,
                     email: user.email,
-                    userId: user.userId,
                     status: user.status,
                     homePage: user.homePage,
                     token: token

@@ -16,7 +16,7 @@ const qrCode = {
     initDate: Date,
     endDate: Date,
     shortenURl: String,
-    createdBy: Number,
+    createdBy: String,
     description: String,
     name: String,
 };
