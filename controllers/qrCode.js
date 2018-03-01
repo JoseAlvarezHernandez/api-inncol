@@ -191,7 +191,7 @@ function postQr(request, response, next) {
                     'Accept': 'application/json',
                 };
                 const params = {
-                    'longUrl': `www.homeid.mx/#!/qr/${request.params.qrCodeId}`,
+                    'longUrl': `http://codigo.inncol.com/#!/qr/${request.params.qrCodeId}`,
                 }
                 unirest.post(url).headers(headers).send(params).end((data) => {
                     if (data.statusCode == 200) {
