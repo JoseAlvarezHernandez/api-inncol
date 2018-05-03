@@ -48,16 +48,16 @@ server.on('after', restify.plugins.auditLogger({
     printLog: false
 }));
 
-server.on('after', restify.plugins.metrics(server, function (err, metrics, req, res, route) {
+server.on('after', restify.plugins.metrics(server, function (error, metrics, req, res, route) {
     logger.save(
         {
             logFile: {
-                metrics: metrics,
+                metrics,
                 request: { body: req._body, headers: req.headers },
                 response: res._body,
-                route: route
+                route
             },
-            error: typeof err === 'undefined' ? false : err
+            error
         }
     );
 }));
